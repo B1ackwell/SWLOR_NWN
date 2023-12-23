@@ -216,7 +216,7 @@ namespace SWLOR.Game.Server.Feature
                 var status = GetLocalInt(activator, activationId);
                 if (status == (int)ActivationStatus.Completed || status == (int)ActivationStatus.Invalid) return;
 
-                var currentPosition = GetPosition(activator);
+                new Vector3 currentPosition = GetPosition(activator);
 
                 if (currentPosition.X != originalPosition.X ||
                     currentPosition.Y != originalPosition.Y ||
@@ -268,7 +268,8 @@ namespace SWLOR.Game.Server.Feature
             var activationId = Guid.NewGuid().ToString();
             var activationDelay = CalculateActivationDelay();
             var recastDelay = ability.RecastDelay?.Invoke(activator) ?? 0f;
-            var position = GetPosition(activator);
+            Vector3 position = new Vector3(0,0,0);
+            position = GetPosition(activator);
             ProcessAnimationAndVisualEffects(activationDelay);
             CheckForActivationInterruption(activationId, position);
             SetLocalInt(activator, activationId, (int)ActivationStatus.Started);
