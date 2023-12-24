@@ -150,7 +150,7 @@ namespace SWLOR.Game.Server.Feature
             // Activation delay is increased if player is equipped with heavy or light armor.
             float CalculateActivationDelay()
             {
-                const float HeavyArmorPenalty = 2.0f;
+                const float HeavyArmorPenalty = 1.25f;
 
                 var armorPenalty = 1.0f;
                 var penaltyMessage = string.Empty;
@@ -161,7 +161,7 @@ namespace SWLOR.Game.Server.Feature
                     if (armorType == ArmorType.Heavy && !ability.IgnoreHeavyArmorPenalty)
                     {
                         armorPenalty = HeavyArmorPenalty;
-                        penaltyMessage = "Heavy armor slows your activation speed by 100%.";
+                        penaltyMessage = "Heavy armor slows your activation speed by 25%.";
                     }
 
                     // If we found heavy armor, we can exit early. Anything else requires us to iterate over the rest of the items.
@@ -216,7 +216,7 @@ namespace SWLOR.Game.Server.Feature
                 var status = GetLocalInt(activator, activationId);
                 if (status == (int)ActivationStatus.Completed || status == (int)ActivationStatus.Invalid) return;
 
-                var currentPosition = GetPosition(activator);
+                Vector3 currentPosition = GetPosition(activator);
 
                 if (currentPosition.X != originalPosition.X ||
                     currentPosition.Y != originalPosition.Y ||
@@ -268,7 +268,7 @@ namespace SWLOR.Game.Server.Feature
             var activationId = Guid.NewGuid().ToString();
             var activationDelay = CalculateActivationDelay();
             var recastDelay = ability.RecastDelay?.Invoke(activator) ?? 0f;
-            var position = GetPosition(activator);
+            Vector3 position = GetPosition(activator);
             ProcessAnimationAndVisualEffects(activationDelay);
             CheckForActivationInterruption(activationId, position);
             SetLocalInt(activator, activationId, (int)ActivationStatus.Started);
