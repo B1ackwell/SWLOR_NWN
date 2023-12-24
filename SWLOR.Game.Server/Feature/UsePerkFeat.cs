@@ -217,10 +217,9 @@ namespace SWLOR.Game.Server.Feature
                 if (status == (int)ActivationStatus.Completed || status == (int)ActivationStatus.Invalid) return;
 
                 Vector3 currentPosition = GetPosition(activator);
+                Messaging.SendMessageNearbyToPlayers(activator, $"Checking if {GetName(activator)} is moving.");
 
-                if (currentPosition.X != originalPosition.X ||
-                    currentPosition.Y != originalPosition.Y ||
-                    currentPosition.Z != originalPosition.Z)
+                if (currentPosition != originalPosition)
                 {
                     RemoveEffectByTag(activator, "ACTIVATION_VFX");
 
@@ -229,7 +228,7 @@ namespace SWLOR.Game.Server.Feature
                     return;
                 }
 
-                DelayCommand(0.5f, () => CheckForActivationInterruption(activationId, originalPosition));
+                DelayCommand(0.1f, () => CheckForActivationInterruption(activationId, originalPosition));
             }
 
             // This method is called after the delay of the ability has finished.
@@ -268,9 +267,9 @@ namespace SWLOR.Game.Server.Feature
             var activationId = Guid.NewGuid().ToString();
             var activationDelay = CalculateActivationDelay();
             var recastDelay = ability.RecastDelay?.Invoke(activator) ?? 0f;
-            Vector3 position = GetPosition(activator);
+            Vector3 originalPosition = GetPosition(activator);
             ProcessAnimationAndVisualEffects(activationDelay);
-            CheckForActivationInterruption(activationId, position);
+            CheckForActivationInterruption(activationId, originalPosition);
             SetLocalInt(activator, activationId, (int)ActivationStatus.Started);
 
             var executeImpact = ability.ActivationAction == null 
